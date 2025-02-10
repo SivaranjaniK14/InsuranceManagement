@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Policies</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Policies List</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Coverage Amount</th>
+                    <th>Premium</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="policy : ${policies}">
+                    <td th:text="${policy.policyId}"></td>
+                    <td th:text="${policy.type}"></td>
+                    <td th:text="${policy.coverageAmount}"></td>
+                    <td th:text="${policy.premium}"></td>
+                    <td th:text="${#dates.format(policy.startDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(policy.endDate, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" th:attr="data-id=${policy.policyId}" data-toggle="modal" data-target="#updatePolicyModal">Edit</button>
+                        <button class="btn btn-danger btn-sm" th:attr="data-id=${policy.policyId}" onclick="deletePolicy(this)">Delete</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button class="btn btn-success" data-toggle="modal" data-target="#addPolicyModal">Add Policy</button>
+    </div>
+
+    <!-- Add Policy Modal -->
+    <div class="modal fade" id="addPolicyModal" tabindex="-1" role="dialog" aria-labelledby="addPolicyModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addPolicyModalLabel">Add Policy</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/api/policies}" method="post">
+                        <div class="form-group">
+                            <label for="type">Type</label>
+                            <input type="text" class="form-control
+                            <label for="type">Type</label>
+                        <input type="text" class="form-control" id="type" name="type" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coverageAmount">Coverage Amount</label>
+                        <input type="number" class="form-control" id="coverageAmount" name="coverageAmount" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="premium">Premium</label>
+                        <input type="number" class="form-control" id="premium" name="premium" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="policyHolderId">Policy Holder ID</label>
+                        <input type="number" class="form-control" id="policyHolderId" name="policyHolderId" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Policy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Update Policy Modal -->
+<div class="modal fade" id="updatePolicyModal" tabindex="-1" role="dialog" aria-labelledby="updatePolicyModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePolicyModalLabel">Update Policy</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/api/policies/{id}(id=${policy.policyId})}" method="post">
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <input type="text" class="form-control" id="type" name="type" th:value="${policy.type}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coverageAmount">Coverage Amount</label>
+                        <input type="number" class="form-control" id="coverageAmount" name="coverageAmount" th:value="${policy.coverageAmount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="premium">Premium</label>
+                        <input type="number" class="form-control" id="premium" name="premium" th:value="${policy.premium}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" th:value="${#dates.format(policy.startDate, 'yyyy-MM-dd')}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" th:value="${#dates.format(policy.endDate, 'yyyy-MM-dd')}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Update Policy</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+    function deletePolicy(button) {
+        var id = button.getAttribute('data-id');
+        fetch('/api/policies/' + id, {
+            method: 'DELETE'
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert('Failed to delete policy');
+            }
+        });
+    }
+</script>
+</body>
+</html>

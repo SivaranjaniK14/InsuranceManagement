@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <title>Insurance Policy Form</title>
+
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+
+    <a class="navbar-brand" href="#">Insurance Management</a>
+
+    <div class="navbar-nav">
+
+      <a class="nav-item nav-link" th:href="@{/}">Home</a>
+
+      <a class="nav-item nav-link" th:href="@{/clients/view}">Clients</a>
+
+      <a class="nav-item nav-link" th:href="@{/policies/view}">Policies</a>
+
+    </div>
+
+  </nav>
+
+  <div class="container mt-4">
+
+    <h2 class="text-center text-primary" th:text="${policy.policyId} ? 'Edit Policy' : 'Add New Policy'"></h2>
+
+    <form th:action="@{/policies/save}" method="post" th:object="${policy}" class="card p-4">
+
+      <input type="hidden" th:field="*{policyId}">
+
+      <div class="form-group">
+
+        <label>Policy Type</label>
+
+        <select class="form-control" th:field="*{type}">
+
+          <option value="Health">Health</option>
+
+          <option value="Vehicle">Vehicle</option>
+
+          <option value="Home">Home</option>
+
+          <option value="Electronics">Electronics</option>
+
+          <option value="Aggriculture">Agriculture</option>
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Coverage Amount</label>
+
+        <input type="number" class="form-control" th:field="*{coverageAmount}" min="10000">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Premium</label>
+
+        <input type="number" class="form-control" th:field="*{premium}" min="100">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Start Date</label>
+
+        <input type="date" class="form-control" th:field="*{startDate}">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>End Date</label>
+
+        <input type="date" class="form-control" th:field="*{endDate}">
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Policy Holder</label>
+
+        <select class="form-control" th:field="*{policyHolder}">
+
+          <option th:each="client : ${clients}" th:value="${client.clientId}" th:text="${client.name}"></option>
+
+        </select>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary">Save Policy</button>
+
+      <a th:href="@{/policies/view}" class="btn btn-secondary">Cancel</a>
+
+    </form>
+
+  </div>
+
+  <footer class="footer bg-dark text-white text-center py-3">
+
+    &copy; 2025 Insurance Management
+
+  </footer>
+
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
